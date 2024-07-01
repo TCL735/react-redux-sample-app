@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { PersonBirthPage } from "../../types";
+import { PersonBirthInfo } from "../../types";
 import { getBirthsOnThisDay } from "./api";
 
 export interface BirthsOnThisDayState {
-  persons: PersonBirthPage[];
+  persons: PersonBirthInfo[];
   status: "ready" | "loading" | "error";
 }
 
