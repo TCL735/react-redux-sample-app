@@ -53,7 +53,7 @@ export const PersonBirth: FC<PersonBirthProps> = (props) => {
         alt="profile"
         className="h-fit w-full object-cover grow-0"
       />
-      <div className="flex flex-col items-center justify-center grow">
+      <div className="flex flex-col items-center justify-center grow text-center">
         <div>{titles?.normalized ?? text}</div>
         <div>{description}</div>
         <div>
