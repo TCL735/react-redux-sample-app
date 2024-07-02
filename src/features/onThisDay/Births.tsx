@@ -1,6 +1,8 @@
 import React, { ComponentProps, FC } from "react";
+import { GridLoader } from "react-spinners";
+import { ErrorModal } from "./ErrorModal";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { fetchBirths } from "./birthsSlice";
+import { clear, fetchBirths } from "./birthsSlice";
 import { PersonInfo } from "../../types";
 import defaultImage from "../../assets/default_image.png";
 
@@ -68,6 +70,7 @@ export const Births = () => {
   const handleGetBirthdays = () => {
     dispatch(fetchBirths());
   };
+  const clearResults = () => dispatch(clear());
 
   return (
     <div className="flex flex-col justify-center items-center gap-y-10">
@@ -79,13 +82,30 @@ export const Births = () => {
         <BirthdayLabel />
       </button>
       {status === "loading" ? (
-        <div>Loading...</div>
+        <GridLoader color="#0EA5E9" size={100} />
       ) : (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {persons.map((person, index) => {
-            return <PersonBirth key={person.tid ?? index} {...person} />;
-          })}
-        </div>
+        <>
+          <ErrorModal
+            status={status}
+            message="Error: failed to fetch birthdays"
+          />
+          <div className="flex flex-col">
+            {persons.length ? (
+              <button
+                type="reset"
+                onClick={clearResults}
+                className="self-end mr-2 mb-2"
+              >
+                x clear results
+              </button>
+            ) : null}
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {persons.map((person, index) => {
+                return <PersonBirth key={person.tid ?? index} {...person} />;
+              })}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

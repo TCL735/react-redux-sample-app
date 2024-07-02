@@ -19,24 +19,26 @@ export const getBirthsOnThisDay = async (): Promise<PersonInfo[]> => {
   const response = await promiseResponse;
   const results = await response.json();
 
-  const persons = results[eventType].map((person: PersonBirth) => {
-    const keywords = person.text
-      .split(" ")
-      .map((word) => word.toLowerCase().replace(",", ""));
+  const persons = results[eventType]
+    .map((person: PersonBirth) => {
+      const keywords = person.text
+        .split(" ")
+        .map((word) => word.toLowerCase().replace(",", ""));
 
-    const pageInfo = person.pages.find((page) => {
-      return keywords.some((keyword) => {
-        return page?.titles?.normalized?.toLowerCase().includes(keyword);
+      const pageInfo = person.pages.find((page) => {
+        return keywords.some((keyword) => {
+          return page?.titles?.normalized?.toLowerCase().includes(keyword);
+        });
       });
-    });
 
-    return {
-      ...pageInfo,
-      text: person.text,
-      year: person.year,
-      month,
-      day,
-    };
-  });
+      return {
+        ...pageInfo,
+        text: person.text,
+        year: person.year,
+        month,
+        day,
+      };
+    })
+    .sort((a: PersonInfo, b: PersonInfo) => b.year - a.year);
   return persons;
 };

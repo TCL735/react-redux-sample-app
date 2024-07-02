@@ -20,7 +20,12 @@ export const fetchBirths = createAsyncThunk("births/fetchBirths", async () => {
 export const birthsSlice = createSlice({
   name: "births",
   initialState,
-  reducers: {},
+  reducers: {
+    clear: (state) => {
+      state.persons = [];
+      state.status = "ready";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchBirths.pending, (state) => {
@@ -35,5 +40,7 @@ export const birthsSlice = createSlice({
       });
   },
 });
+
+export const { clear } = birthsSlice.actions;
 
 export const birthsReducer = birthsSlice.reducer;
