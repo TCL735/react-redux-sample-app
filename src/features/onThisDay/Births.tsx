@@ -6,6 +6,16 @@ import { clear, fetchBirths } from "./birthsSlice";
 import { PersonInfo } from "../../types";
 import defaultImage from "../../assets/default_image.png";
 
+const BirthdayLabel = () => <div>🎂 Birthdays</div>;
+
+const Link = ({ children, ...props }: ComponentProps<"a">) => (
+  <a {...props}>{children}</a>
+);
+
+const Linkless = ({ children, ...props }: ComponentProps<"div">) => (
+  <div {...props}>{children}</div>
+);
+
 type PersonBirthProps = Pick<
   PersonInfo,
   | "content_urls"
@@ -17,14 +27,6 @@ type PersonBirthProps = Pick<
   | "month"
   | "day"
 >;
-
-const Link = ({ children, ...props }: ComponentProps<"a">) => (
-  <a {...props}>{children}</a>
-);
-const Linkless = ({ children, ...props }: ComponentProps<"div">) => (
-  <div {...props}>{children}</div>
-);
-
 export const PersonBirth: FC<PersonBirthProps> = (props) => {
   const {
     content_urls,
@@ -41,7 +43,7 @@ export const PersonBirth: FC<PersonBirthProps> = (props) => {
 
   return (
     <Wrapper
-      href={content_urls?.desktop.page ?? ""}
+      href={content_urls?.desktop?.page ?? ""}
       className="border border-black no-underline text-black p-1 flex flex-col justify-between"
       target="_blank"
       rel="noreferrer"
@@ -62,15 +64,41 @@ export const PersonBirth: FC<PersonBirthProps> = (props) => {
   );
 };
 
-const BirthdayLabel = () => <div>🎂 Birthdays 🎂</div>;
+interface BirthdaListProps {
+  persons: PersonInfo[];
+}
+export const BirthdayList: FC<BirthdaListProps> = ({ persons }) => {
+  const dispatch = useAppDispatch();
+  const clearResults = () => dispatch(clear());
+
+  return (
+    <div className="flex flex-col">
+      {persons.length ? (
+        <button
+          type="reset"
+          onClick={clearResults}
+          className="self-end mr-2 mb-2"
+        >
+          x clear results
+        </button>
+      ) : null}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {persons.map((person, index) => {
+          return <PersonBirth key={person.tid ?? index} {...person} />;
+        })}
+      </div>
+    </div>
+  );
+};
 
 export const Births = () => {
-  const { persons, status } = useAppSelector((state) => state.births);
+  const { persons, status, errorMessage } = useAppSelector(
+    (state) => state.births,
+  );
   const dispatch = useAppDispatch();
   const handleGetBirthdays = () => {
     dispatch(fetchBirths());
   };
-  const clearResults = () => dispatch(clear());
 
   return (
     <div className="flex flex-col justify-center items-center gap-y-10">
@@ -87,24 +115,13 @@ export const Births = () => {
         <>
           <ErrorModal
             status={status}
-            message="Error: failed to fetch birthdays"
+            message={
+              errorMessage.length
+                ? errorMessage
+                : "Error: unable to fetch birthdays"
+            }
           />
-          <div className="flex flex-col">
-            {persons.length ? (
-              <button
-                type="reset"
-                onClick={clearResults}
-                className="self-end mr-2 mb-2"
-              >
-                x clear results
-              </button>
-            ) : null}
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {persons.map((person, index) => {
-                return <PersonBirth key={person.tid ?? index} {...person} />;
-              })}
-            </div>
-          </div>
+          <BirthdayList persons={persons} />
         </>
       )}
     </div>

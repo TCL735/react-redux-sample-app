@@ -5,11 +5,13 @@ import { getBirthsOnThisDay } from "./api";
 export interface BirthsOnThisDayState {
   persons: PersonInfo[];
   status: "ready" | "loading" | "error";
+  errorMessage: string;
 }
 
 const initialState: BirthsOnThisDayState = {
   persons: [],
   status: "ready",
+  errorMessage: "",
 };
 
 export const fetchBirths = createAsyncThunk("births/fetchBirths", async () => {
@@ -24,19 +26,29 @@ export const birthsSlice = createSlice({
     clear: (state) => {
       state.persons = [];
       state.status = "ready";
+      state.errorMessage = "";
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchBirths.pending, (state) => {
         state.status = "loading";
+        state.errorMessage = "";
       })
       .addCase(fetchBirths.fulfilled, (state, action) => {
-        state.status = "ready";
-        state.persons = action.payload;
+        if (action.payload.responseStatus.ok) {
+          state.status = "ready";
+          state.errorMessage = "";
+        } else {
+          state.status = "error";
+          state.errorMessage = action.payload.responseStatus.statusText;
+        }
+        state.persons = action.payload.persons;
       })
       .addCase(fetchBirths.rejected, (state) => {
         state.status = "error";
+        state.errorMessage = "Error";
+        state.persons = [];
       });
   },
 });

@@ -54,10 +54,16 @@ export interface PageInfo {
 export interface PersonBirth {
   text: string;
   year: number;
-  pages: (PageInfo | undefined)[];
+  pages: Partial<PageInfo>[];
 }
 
 export type PersonInfo = Pick<PersonBirth, "text" | "year"> & {
   month: string;
   day: string;
 } & Partial<PageInfo>;
+
+export type ResponseStatus = {
+  ok: boolean;
+  status: number;
+  statusText: string;
+};

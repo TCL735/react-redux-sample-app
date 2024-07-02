@@ -1,4 +1,9 @@
-import { OnThisDayEventType, PersonBirth, PersonInfo } from "../../types";
+import {
+  OnThisDayEventType,
+  PersonBirth,
+  PersonInfo,
+  ResponseStatus,
+} from "../../types";
 
 export const getOnThisDay = (eventType: OnThisDayEventType) => {
   const today = new Date();
@@ -13,21 +18,25 @@ export const getOnThisDay = (eventType: OnThisDayEventType) => {
   };
 };
 
-export const getBirthsOnThisDay = async (): Promise<PersonInfo[]> => {
+export const getBirthsOnThisDay = async (): Promise<{
+  persons: PersonInfo[];
+  responseStatus: ResponseStatus;
+}> => {
   const eventType = "births";
   const { promiseResponse, month, day } = getOnThisDay(eventType);
   const response = await promiseResponse;
+  const { ok, status, statusText } = response;
   const results = await response.json();
 
-  const persons = results[eventType]
-    .map((person: PersonBirth) => {
+  const persons = results?.[eventType]
+    ?.map((person: PersonBirth) => {
       const keywords = person.text
         .split(" ")
         .map((word) => word.toLowerCase().replace(",", ""));
 
       const pageInfo = person.pages.find((page) => {
         return keywords.some((keyword) => {
-          return page?.titles?.normalized?.toLowerCase().includes(keyword);
+          return page.titles?.normalized?.toLowerCase().includes(keyword);
         });
       });
 
@@ -37,8 +46,17 @@ export const getBirthsOnThisDay = async (): Promise<PersonInfo[]> => {
         year: person.year,
         month,
         day,
+        responseStatus: {
+          ok,
+          status,
+          statusText,
+        },
       };
     })
     .sort((a: PersonInfo, b: PersonInfo) => b.year - a.year);
-  return persons;
+
+  return {
+    persons: persons ?? [],
+    responseStatus: { ok, status, statusText },
+  };
 };
