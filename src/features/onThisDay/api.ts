@@ -1,4 +1,4 @@
-import { OnThisDayEventType, PersonBirthInfo } from "../../types";
+import { OnThisDayEventType, PersonBirth, PersonInfo } from "../../types";
 
 export const getOnThisDay = (eventType: OnThisDayEventType) => {
   let today = new Date();
@@ -13,23 +13,29 @@ export const getOnThisDay = (eventType: OnThisDayEventType) => {
   };
 };
 
-export const getBirthsOnThisDay = async (): Promise<PersonBirthInfo[]> => {
+export const getBirthsOnThisDay = async (): Promise<PersonInfo[]> => {
   const eventType = "births";
   const { promiseResponse, month, day } = getOnThisDay(eventType);
   const response = await promiseResponse;
   const results = await response.json();
-  console.log("results", results);
-  const persons = results[eventType].map((personInfo: any) => {
-    console.log("personInfo:", personInfo);
+
+  const persons = results[eventType].map((personInfo: PersonBirth) => {
+    const keywords = personInfo.text
+      .split(" ")
+      .map((word) => word.toLowerCase().replace(",", ""));
+
+    const pageInfo = personInfo.pages.find((page) => {
+      return keywords.some((keyword) => {
+        return page?.titles.normalized.toLowerCase().includes(keyword);
+      });
+    });
+
     return {
-      id: personInfo?.pages?.[0]?.tid,
-      year: personInfo?.year,
-      month: Number(month),
-      day: Number(day),
-      text: personInfo?.text,
-      description: personInfo?.pages?.[0]?.description,
-      thumbnail: personInfo?.pages?.[0]?.thumbnail,
-      pageLink: personInfo?.pages?.[0]?.content_urls?.desktop.page,
+      ...pageInfo,
+      text: personInfo.text,
+      year: personInfo.year,
+      month,
+      day,
     };
   });
   return persons;

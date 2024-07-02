@@ -6,27 +6,58 @@ export type OnThisDayEventType =
   | "holidays"
   | "events";
 
-export interface OnThisDayEventInfo {
-  [key: string]:
-    | number
-    | string
-    | OnThisDayEventInfo
-    | Array<string | number | OnThisDayEventInfo>;
-}
-
-export interface Thumbnail {
-  source: string;
+export type ImageProperties = {
   height: number;
+  source: string;
   width: number;
+};
+
+export type UrlProperties = {
+  edit: string;
+  page: string;
+  revision: string;
+  talk: string;
+};
+export interface PageInfo {
+  content_urls: {
+    desktop: UrlProperties;
+    mobile: UrlProperties;
+  };
+  description?: string;
+  description_source?: string;
+  dir: string;
+  displaytitle: string;
+  extract: string;
+  extract_html: string;
+  lang: string;
+  namespace: {
+    id: number;
+    text: string;
+  };
+  normalizedtitle: string;
+  originalimage: ImageProperties;
+  pageid: number;
+  revision: string;
+  thumbnail?: ImageProperties;
+  tid: string;
+  timestamp: string;
+  title: string;
+  titles: {
+    canonical: string;
+    display: string;
+    normalized: string;
+  };
+  type: string;
+  wikibase_item: string;
 }
 
-export interface PersonBirthInfo {
-  id: string;
-  year: number;
-  month: number;
-  day: number;
+export interface PersonBirth {
   text: string;
-  description: string;
-  thumbnail: Thumbnail;
-  pageLink: string;
+  year: number;
+  pages: (PageInfo | undefined)[];
 }
+
+export type PersonInfo = Pick<PersonBirth, "text" | "year"> & {
+  month: string;
+  day: string;
+} & Partial<PageInfo>;

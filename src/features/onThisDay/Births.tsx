@@ -1,26 +1,56 @@
-import React, { FC } from "react";
+import React, { ComponentProps, FC } from "react";
 import { Button, Link } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { fetchBirths } from "./birthsSlice";
-import { PersonBirthInfo } from "../../types";
+import { PersonInfo } from "../../types";
+import defaultImage from "../../assets/default_image.png";
 
-type PersonBirthProps = Omit<PersonBirthInfo, "id">;
+type PersonBirthProps = Pick<
+  PersonInfo,
+  | "content_urls"
+  | "description"
+  | "thumbnail"
+  | "text"
+  | "titles"
+  | "year"
+  | "month"
+  | "day"
+>;
+
+const Linkless = (props: ComponentProps<"div">) => <div>{props.children}</div>;
 
 export const PersonBirth: FC<PersonBirthProps> = (props) => {
-  const { text, thumbnail, description, year, month, day, pageLink } = props;
+  const {
+    content_urls,
+    description,
+    thumbnail,
+    text,
+    titles,
+    year,
+    month,
+    day,
+  } = props;
+
+  const Wrapper = content_urls?.desktop?.page ? Link : Linkless;
+
   return (
-    <Link href={pageLink} className="relative block">
+    <Wrapper
+      href={content_urls?.desktop.page ?? ""}
+      className="relative block"
+      target="_blank"
+      rel="noreferrer"
+    >
       <img
-        src={thumbnail?.source}
+        src={thumbnail?.source ?? defaultImage}
         alt="profile"
-        className="h-5/6 w-full object-cover"
+        className="h-fit w-full object-cover"
       />
-      <div>{text}</div>
+      <div>{titles?.normalized ?? text}</div>
       <div>{description}</div>
       <div>
         Born {month}-{day}-{year}
       </div>
-    </Link>
+    </Wrapper>
   );
 };
 
@@ -31,8 +61,6 @@ export const Births = () => {
     dispatch(fetchBirths());
   };
 
-  console.log("persons", persons);
-
   return (
     <div>
       <Button type="button" variant="contained" onClick={handleGetBirthdays}>
@@ -41,9 +69,9 @@ export const Births = () => {
       {status === "loading" ? (
         <div>Loading...</div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {persons.map((person) => {
-            return <PersonBirth key={person.id} {...person} />;
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {persons.map((person, index) => {
+            return <PersonBirth key={person.tid ?? index} {...person} />;
           })}
         </div>
       )}
