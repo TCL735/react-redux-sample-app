@@ -1,5 +1,4 @@
 import React, { ComponentProps, FC } from "react";
-import { Button, Link } from "@mui/material";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { fetchBirths } from "./birthsSlice";
 import { PersonInfo } from "../../types";
@@ -17,7 +16,12 @@ type PersonBirthProps = Pick<
   | "day"
 >;
 
-const Linkless = (props: ComponentProps<"div">) => <div>{props.children}</div>;
+const Link = ({ children, ...props }: ComponentProps<"a">) => (
+  <a {...props}>{children}</a>
+);
+const Linkless = ({ children, ...props }: ComponentProps<"div">) => (
+  <div {...props}>{children}</div>
+);
 
 export const PersonBirth: FC<PersonBirthProps> = (props) => {
   const {
@@ -36,23 +40,27 @@ export const PersonBirth: FC<PersonBirthProps> = (props) => {
   return (
     <Wrapper
       href={content_urls?.desktop.page ?? ""}
-      className="relative block"
+      className="border border-black no-underline text-black p-1 flex flex-col justify-between"
       target="_blank"
       rel="noreferrer"
     >
       <img
         src={thumbnail?.source ?? defaultImage}
         alt="profile"
-        className="h-fit w-full object-cover"
+        className="h-fit w-full object-cover grow-0"
       />
-      <div>{titles?.normalized ?? text}</div>
-      <div>{description}</div>
-      <div>
-        Born {month}-{day}-{year}
+      <div className="flex flex-col items-center justify-center grow">
+        <div>{titles?.normalized ?? text}</div>
+        <div>{description}</div>
+        <div>
+          Born {month}-{day}-{year}
+        </div>
       </div>
     </Wrapper>
   );
 };
+
+const BirthdayLabel = () => <div>🎂 Birthdays 🎂</div>;
 
 export const Births = () => {
   const { persons, status } = useAppSelector((state) => state.births);
@@ -62,10 +70,14 @@ export const Births = () => {
   };
 
   return (
-    <div>
-      <Button type="button" variant="contained" onClick={handleGetBirthdays}>
-        Birthdays
-      </Button>
+    <div className="flex flex-col justify-center items-center gap-y-10">
+      <button
+        type="button"
+        className="w-80 border border-sky-500 bg-sky-500 text-white"
+        onClick={handleGetBirthdays}
+      >
+        <BirthdayLabel />
+      </button>
       {status === "loading" ? (
         <div>Loading...</div>
       ) : (

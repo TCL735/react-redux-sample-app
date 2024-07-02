@@ -1,10 +1,10 @@
 import { OnThisDayEventType, PersonBirth, PersonInfo } from "../../types";
 
 export const getOnThisDay = (eventType: OnThisDayEventType) => {
-  let today = new Date();
-  let month = String(today.getMonth() + 1).padStart(2, "0");
-  let day = String(today.getDate()).padStart(2, "0");
-  let url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/${eventType}/${month}/${day}`;
+  const today = new Date();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/${eventType}/${month}/${day}`;
 
   return {
     promiseResponse: fetch(url),
@@ -19,21 +19,21 @@ export const getBirthsOnThisDay = async (): Promise<PersonInfo[]> => {
   const response = await promiseResponse;
   const results = await response.json();
 
-  const persons = results[eventType].map((personInfo: PersonBirth) => {
-    const keywords = personInfo.text
+  const persons = results[eventType].map((person: PersonBirth) => {
+    const keywords = person.text
       .split(" ")
       .map((word) => word.toLowerCase().replace(",", ""));
 
-    const pageInfo = personInfo.pages.find((page) => {
+    const pageInfo = person.pages.find((page) => {
       return keywords.some((keyword) => {
-        return page?.titles.normalized.toLowerCase().includes(keyword);
+        return page?.titles?.normalized?.toLowerCase().includes(keyword);
       });
     });
 
     return {
       ...pageInfo,
-      text: personInfo.text,
-      year: personInfo.year,
+      text: person.text,
+      year: person.year,
       month,
       day,
     };
