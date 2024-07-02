@@ -29,7 +29,7 @@ export const getBirthsOnThisDay = async (): Promise<{
   const results = await response.json();
 
   const persons = results?.[eventType]
-    ?.map((person: PersonBirth) => {
+    ?.map?.((person: PersonBirth) => {
       const keywords = person.text
         .split(" ")
         .map((word) => word.toLowerCase().replace(",", ""));
