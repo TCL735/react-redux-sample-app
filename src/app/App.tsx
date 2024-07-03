@@ -1,5 +1,5 @@
 import React from "react";
-import { Births } from "./features/onThisDay/Births";
+import { Births } from "../features/onThisDay/Births";
 
 export const App = () => {
   return (

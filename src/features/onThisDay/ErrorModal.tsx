@@ -29,6 +29,7 @@ export const ErrorModal: FC<ErrorModalProps> = (props) => {
       isOpen={isOpen}
       onRequestClose={closeModal}
       contentLabel="Error"
+      ariaHideApp={false}
       style={customStyles}
     >
       <div className="flex flex-col justify-between">

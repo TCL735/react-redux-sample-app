@@ -34,11 +34,12 @@ export const getBirthsOnThisDay = async (): Promise<{
         .split(" ")
         .map((word) => word.toLowerCase().replace(",", ""));
 
-      const pageInfo = person.pages.find((page) => {
-        return keywords.some((keyword) => {
-          return page.titles?.normalized?.toLowerCase().includes(keyword);
-        });
-      });
+      const pageInfo =
+        person.pages.find((page) => {
+          return keywords.some((keyword) => {
+            return page.titles?.normalized?.toLowerCase().includes(keyword);
+          });
+        }) ?? {};
 
       return {
         ...pageInfo,
@@ -46,11 +47,6 @@ export const getBirthsOnThisDay = async (): Promise<{
         year: person.year,
         month,
         day,
-        responseStatus: {
-          ok,
-          status,
-          statusText,
-        },
       };
     })
     .sort((a: PersonInfo, b: PersonInfo) => b.year - a.year);
