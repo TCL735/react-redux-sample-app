@@ -1,17 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { PersonInfo } from "../../types";
+import { PersonInfo, SortDirection } from "../../types";
 import { getBirthsOnThisDay } from "./api";
 
 export interface BirthsOnThisDayState {
   persons: PersonInfo[];
   status: "ready" | "loading" | "error";
   errorMessage: string;
+  sortDirection: SortDirection;
 }
 
 const initialState: BirthsOnThisDayState = {
   persons: [],
   status: "ready",
   errorMessage: "",
+  sortDirection: SortDirection.DESCENDING,
 };
 
 export const fetchBirths = createAsyncThunk("births/fetchBirths", async () => {
@@ -25,6 +27,17 @@ export const birthsSlice = createSlice({
   reducers: {
     clear: (state) => {
       state.persons = [];
+      state.status = "ready";
+      state.errorMessage = "";
+    },
+    sort: (state, action) => {
+      if (action.payload === SortDirection.ASCENDING) {
+        state.persons.sort((a, b) => a.year - b.year);
+        state.sortDirection = SortDirection.ASCENDING;
+      } else {
+        state.persons.sort((a, b) => b.year - a.year);
+        state.sortDirection = SortDirection.DESCENDING;
+      }
       state.status = "ready";
       state.errorMessage = "";
     },
@@ -53,6 +66,6 @@ export const birthsSlice = createSlice({
   },
 });
 
-export const { clear } = birthsSlice.actions;
+export const { clear, sort } = birthsSlice.actions;
 
 export const birthsReducer = birthsSlice.reducer;

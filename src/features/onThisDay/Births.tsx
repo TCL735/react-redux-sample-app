@@ -2,8 +2,8 @@ import React, { ComponentProps, FC } from "react";
 import { GridLoader } from "react-spinners";
 import { ErrorModal } from "./ErrorModal";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { clear, fetchBirths } from "./birthsSlice";
-import { PersonInfo } from "../../types";
+import { clear, fetchBirths, sort } from "./birthsSlice";
+import { PersonInfo, SortDirection } from "../../types";
 import defaultImage from "../../assets/default_image.png";
 
 const BirthdayLabel = () => <div>🎂 Birthdays</div>;
@@ -64,23 +64,57 @@ export const PersonBirth: FC<PersonBirthProps> = (props) => {
   );
 };
 
-interface BirthdaListProps {
-  persons: PersonInfo[];
-}
-export const BirthdayList: FC<BirthdaListProps> = ({ persons }) => {
+const SortButton = () => {
+  const { sortDirection } = useAppSelector((state) => state.births);
+  const dispatch = useAppDispatch();
+
+  const handleSort = () => {
+    const newDirection =
+      sortDirection === SortDirection.ASCENDING
+        ? SortDirection.DESCENDING
+        : SortDirection.ASCENDING;
+
+    dispatch(sort(newDirection));
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleSort}
+      className="mr-4 mb-2 p-1 border bg-gradient-to-r from-green-400 to-teal-900"
+    >
+      <span className="mr-2">Year</span>
+      <span>{sortDirection === SortDirection.ASCENDING ? "🔼" : "🔽"}</span>
+    </button>
+  );
+};
+
+const ClearButton = () => {
   const dispatch = useAppDispatch();
   const clearResults = () => dispatch(clear());
 
   return (
+    <button
+      type="reset"
+      onClick={clearResults}
+      className="mr-2 mb-2 p-1 border bg-red-100"
+    >
+      x clear results
+    </button>
+  );
+};
+
+interface BirthdaListProps {
+  persons: PersonInfo[];
+}
+export const BirthdayList: FC<BirthdaListProps> = ({ persons }) => {
+  return (
     <div className="flex flex-col">
       {persons.length ? (
-        <button
-          type="reset"
-          onClick={clearResults}
-          className="self-end mr-2 mb-2"
-        >
-          x clear results
-        </button>
+        <div className="self-end">
+          <SortButton />
+          <ClearButton />
+        </div>
       ) : null}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {persons.map((person, index) => {

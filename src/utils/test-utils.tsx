@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from "react";
 import { render } from "@testing-library/react";
 import type { RenderOptions } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { rest, response } from "msw";
+import { rest } from "msw";
 import { setupStore } from "../app/store";
 import type { AppStore, RootState } from "../app/store";
 
@@ -32,7 +32,6 @@ export const renderWithProviders = (
 };
 
 const today = new Date();
-const year = today.getFullYear();
 const month = String(today.getMonth() + 1).padStart(2, "0");
 const day = String(today.getDate()).padStart(2, "0");
 const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/births/${month}/${day}`;
@@ -40,7 +39,7 @@ const url = `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/births/${m
 export const mockPeople = [
   {
     text: "Curious George",
-    year,
+    year: 2024,
     pages: [
       {
         content_urls: {
@@ -73,7 +72,7 @@ export const mockPeople = [
   },
   {
     text: "Tony Stark",
-    year,
+    year: 2023,
     pages: [
       {
         content_urls: {
@@ -106,7 +105,7 @@ export const mockPeople = [
   },
   {
     text: "Thomas",
-    year,
+    year: 2022,
     pages: [
       {
         content_urls: {

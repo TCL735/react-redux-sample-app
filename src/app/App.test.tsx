@@ -5,6 +5,7 @@ import { store } from "./store";
 import { App } from "./App";
 import { mockPeople, renderWithProviders } from "../utils/test-utils";
 import { BirthsOnThisDayState } from "../features/onThisDay/birthsSlice";
+import { SortDirection } from "../types";
 
 test("Renders the app", () => {
   render(
@@ -27,6 +28,7 @@ test("Uses preloaded state to render", () => {
     })),
     status: "ready" as BirthsOnThisDayState["status"],
     errorMessage: "",
+    sortDirection: SortDirection.DESCENDING,
   };
   renderWithProviders(<App />, {
     preloadedState: { births: initialBirthdays },

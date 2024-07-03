@@ -12,6 +12,11 @@ export type ImageProperties = {
   width: number;
 };
 
+export enum SortDirection {
+  ASCENDING = "ascending",
+  DESCENDING = "descending",
+}
+
 export type UrlProperties = {
   edit: string;
   page: string;

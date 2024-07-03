@@ -5,6 +5,7 @@ import { handlers } from "../../utils/test-utils";
 import { renderWithProviders } from "../../utils/test-utils";
 import { App } from "../../app/App";
 import { BirthsOnThisDayState } from "./birthsSlice";
+import { SortDirection } from "../../types";
 
 const server = setupServer(...handlers);
 // Enable API mocking before tests.
@@ -22,6 +23,7 @@ test("ErrorModal appears when in error state and can be closed", async () => {
     persons: [],
     status: "error" as BirthsOnThisDayState["status"],
     errorMessage,
+    sortDirection: SortDirection.DESCENDING,
   };
   renderWithProviders(<App />, { preloadedState: { births: initialState } });
 
