@@ -1,5 +1,3 @@
-## Levelpath frontend take-home task
-
 ### Task
 
 Implement a list of today's birthdays using Wikipedia's "On this day" API.
@@ -18,16 +16,6 @@ Implement a list of today's birthdays using Wikipedia's "On this day" API.
 - You can use whatever React project boilerplate, tools and libraries you like.
 - TypeScript is preferred over JavaScript.
 - Application parts must have tests, however it's not necessary to have full test coverage, write at least a single one for every type of test. As an example for imaginary Redux project: action creator, reducer, asynchronous functions, UI component render, UI component user interactions are different types of tests.
-
-### Submitting
-
-- Please bundle your homework using `git bundle create lp-fe-homework.bundle --all`
-- Attach the bundle file to an email and send as a reply to the initial homework email
-- We will then extract it using `git clone lp-fe-homework.bundle` on our side
-
----
-
-version: 2023-07-31
 
 ## Available Scripts
 
